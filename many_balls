@@ -1,0 +1,40 @@
+import turtle
+import random
+
+okno = turtle.Screen()
+
+granica = turtle.Turtle()
+granica.hideturtle()
+granica.speed(0)
+granica.penup()
+granica.pensize(5)
+granica.color(random.random(), random.random(), random.random())
+granica.goto(250, 150)
+granica.pendown()
+granica.goto(250, -150)
+granica.goto(-250, -150)
+granica.goto(-250, 150)
+granica.goto(250, 150)
+
+balls = []
+kolvo = random.randint(5, 10)
+for i in range(kolvo):
+    ball = turtle.Turtle()
+    ball.shape('circle')
+    ball.penup()
+    ball.color(random.random(), random.random(), random.random())
+    ball.pencolor('black')
+    dx = random.randint(-10, 15)
+    dy = random.randint(-10, 15)
+    balls.append([ball, dx, dy])
+
+while True:
+    for i in range(kolvo):
+        x, y = balls[i][0].position()
+        if x + balls[i][1] > 240 or x + balls[i][1] < -240:
+            balls[i][1] = -balls[i][1]
+            balls[i][0].color(random.random(), random.random(), random.random())
+        if y + balls[i][2] > 140 or y + balls[i][2] < - 140:
+            balls[i][2] = -balls[i][2]
+            balls[i][0].color(random.random(), random.random(), random.random())
+        balls[i][0].goto(x + balls[i][1], y + balls[i][2])
