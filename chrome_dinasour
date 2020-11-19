@@ -1,0 +1,124 @@
+import pygame
+import random
+
+pygame.init()
+
+okno_shirina = 800
+okno_visota = 600
+color = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)]
+okno = pygame.display.set_mode((okno_shirina, okno_visota))
+pygame.display.set_caption('Kiruxa ahahha')
+icon = pygame.image.load('pygame.jpg')
+pygame.display.set_icon(icon)
+
+clock = pygame.time.Clock()
+
+pers_shirina = 60
+pers_visota = 100
+pers_x = (okno_shirina // 3)
+pers_y = okno_visota - 100 - pers_visota
+
+make_jump = False
+max_jump = 6
+jump_counter = max_jump
+
+cactus_massiv_kartinki = [pygame.image.load('cactus_25_70.png'), pygame.image.load('cactus_30_60.png'), pygame.image.load('cactus_40_55.png'), pygame.image.load('cactus_20_75.png')]
+cactus_massiv_kartinki_options = [25, 430, 30, 440, 40, 445, 20, 425]
+class Cactus:
+    def __init__(self, x, y, shirina, visota, skorost, kartinka):
+        self.x = x
+        self.y = y
+        self.shirina = shirina
+        self.visota = visota
+        self.skorost = skorost
+        self.kartinka = kartinka
+
+    def move(self):
+        if self.x >= -self.shirina:
+            okno.blit(self.kartinka, (self.x, self.y))
+            #pygame.draw.rect(okno, (38, 67, 64), (self.x, self.y, self.shirina, self.visota))
+            self.x -= self.skorost
+            return True
+        else:
+            # self.x = okno_shirina
+            return False
+
+    def nazad(self, radius):
+        self.x = radius
+
+
+# def cactus_random(i):
+#     visota = random.randint(50, 100)
+#     return okno_shirina + i * (random.randint(150, 200) + 50), okno_visota - 100 - visota, random.randint(10,
+#                                                                                                           30), visota, 1.75
+
+
+def cactus_create_massive(massive):
+    # for i in range(4):
+        # x, y, shirina, visota, skorost = cactus_random(i)
+    massive.append(Cactus(okno_shirina, okno_visota - 170, 25, 70, 1.5))
+    massive.append(Cactus(okno_shirina + 200, okno_visota - 160, 30, 60, 1.5))
+    massive.append(Cactus(okno_shirina + 350, okno_visota - 155, 40, 55, 1.5))
+    massive.append(Cactus(okno_shirina + 500, okno_visota - 175, 20, 75, 1.5))
+
+
+def cactus_find_radius(massive):
+    maximum = max(massive[0].x, massive[1].x, massive[2].x, massive[3].x)
+
+    if maximum < okno_shirina:
+        radius = okno_shirina
+        if radius - maximum < 50:
+            radius += 150
+    else:
+        radius = maximum
+
+    dice = random.random()
+    if dice < 0.25:
+        radius += random.randint(25, 50)
+    else:
+        radius += random.randint(150, 250)
+
+    return radius
+
+
+def cactus_draw_massive(massive):
+    for cactus in massive:
+        check = cactus.move()
+        if not check:
+            cactus.nazad(cactus_find_radius(massive))
+
+
+def jump():
+    global pers_y, make_jump, jump_counter
+    if jump_counter >= - max_jump:
+        pers_y -= jump_counter
+        jump_counter -= 0.1
+    else:
+        jump_counter = max_jump
+        make_jump = False
+
+
+def run_game():
+    run = True
+    global make_jump
+    cactus_massive = []
+    cactus_create_massive(cactus_massive)
+    land = pygame.image.load(r'Land.jpg')
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE]:
+            make_jump = True
+        if make_jump:
+            jump()
+        okno.blit(land, (0, 0))
+        pygame.draw.rect(okno, (247, 240, 22), (pers_x, pers_y, pers_shirina, pers_visota))
+        cactus_draw_massive(cactus_massive)
+        pygame.display.update()
+        #clock.tick(80)
+
+
+run_game()
