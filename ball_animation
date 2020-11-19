@@ -1,0 +1,68 @@
+import turtle
+import random
+
+okno = turtle.Screen()
+
+granica = turtle.Turtle()
+granica.hideturtle()
+granica.speed(0)
+granica.penup()
+granica.pensize(5)
+granica.color('red')
+granica.goto(250, 150)
+granica.pendown()
+granica.goto(250, -150)
+granica.goto(-250, -150)
+granica.goto(-250, 150)
+granica.goto(250, 150)
+
+ball = turtle.Turtle()
+ball.shape('circle')
+ball.penup()
+dx = random.randint(-5, 5)
+dy = random.randint(-5, 5)
+
+boom = turtle.Turtle()
+boom.hideturtle()
+boom.speed(0)
+boom.penup()
+
+
+def bah(x, y):
+    boom.setposition(x, y)
+    boom.pendown()
+    for ygol in range(0, 360, 10):
+        boom.seth(ygol)
+        boom.circle(25)
+        boom.pencolor(random.random(), random.random(), random.random())
+    boom.penup()
+
+
+def restart():
+    ball.hideturtle()
+    ball.setposition(0, 0)
+    ball.showturtle()
+    global x, y, dx, dy
+    x = 0
+    y = 0
+    dx = random.randint(-5, 5)
+    dy = random.randint(-5, 5)
+    return x, y, dx, dy
+
+
+while True:
+    x, y = ball.position()
+    if x + dx > 240 or x + dx < -240:
+        bah(x + 10 * dx / abs(dx), y)
+        dx = -dx
+
+    if y + dy > 140 or y + dy < - 140:
+        bah(x, y + 10 * dy / abs(dy))
+        dy = -dy
+
+    okno.listen()
+    okno.onkey(restart, 'r')
+
+    ball.goto(x + dx, y + dy)
+
+okno.mainloop()
